@@ -1,0 +1,30 @@
+{
+  "name": "WhatsApp™ Instant",
+  "description": "Access to WhatsApp Web from within a toolbar panel.",
+  "version": "0.1.0",
+  "manifest_version": 2,
+  "icons": {
+    "48": "icon.svg",
+    "96": "icon.svg"
+  },
+  "background": {
+    "scripts": [
+      "src/background.js"
+    ]
+  },
+  "content_security_policy": "default-src 'self'; script-src 'self' 'unsafe-eval' https://web.whatsapp.com https://ajax.googleapis.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://web.whatsapp.com http://fonts.googleapis.com https://fonts.googleapis.com; img-src * data: blob:; font-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com http://fonts.gstatic.com; connect-src 'self' https://web.whatsapp.com wss://*.web.whatsapp.com https://*.whatsapp.net https://dyn.web.whatsapp.com https://*.giphy.com https://*.tenor.co blob: https://crashlogs.whatsapp.net/wa_clb_data https://crashlogs.whatsapp.net/wa_fls_upload_check https://www.bingapis.com/api/v6/images/search; media-src 'self' https://*.whatsapp.com https://*.whatsapp.net https://*.giphy.com https://*.tenor.co blob: mediastream:; child-src 'self' https://web.whatsapp.com blob:; report-uri https://dyn.web.whatsapp.com/cspv;",
+  "permissions": [
+    "https://*.whatsapp.com/*",
+    "wss://*.web.whatsapp.com/*",
+    "webRequest",
+    "webRequestBlocking",
+    "notifications",
+    "storage"
+  ],
+  "browser_action": {
+    "browser_style": true,
+    "default_icon": "icon.svg",
+    "default_title": "WhatsApp™ Instant",
+    "default_popup": "src/popup/index.html"
+  }
+}
