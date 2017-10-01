@@ -3,6 +3,11 @@
   "description": "Access to WhatsApp Web from within a toolbar panel.",
   "version": "0.1.0",
   "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "{2b703a6c-4cf0-4791-b6ec-07decb5d9625}"
+    }
+  },
   "icons": {
     "48": "icon.svg",
     "96": "icon.svg"
