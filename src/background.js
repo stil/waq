@@ -67,7 +67,6 @@ function reloadWhatsAppCache() {
     const headEl = wab.getElementsByTagName('head')[0];
     headEl.insertBefore(baseEl, headEl.firstChild);
 
-    console.log(wab);
     chrome.storage.local.set({ waCache: wab.documentElement.outerHTML });
     // const iframe = document.getElementById('iframe');
     // iframe.srcdoc = wab.outerHTML;
