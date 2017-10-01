@@ -60,8 +60,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 function reloadWhatsAppCache() {
   const oReq = new XMLHttpRequest();
   oReq.addEventListener('load', function () {
-    const wab = document.createElement('html');
-    wab.innerHTML = this.responseText;
+    const wab = new DOMParser().parseFromString(this.responseText, 'text/html');
 
     const baseEl = document.createElement('base');
     baseEl.href = 'https://web.whatsapp.com';
@@ -69,7 +68,7 @@ function reloadWhatsAppCache() {
     headEl.insertBefore(baseEl, headEl.firstChild);
 
     console.log(wab);
-    chrome.storage.local.set({ waCache: wab.outerHTML });
+    chrome.storage.local.set({ waCache: wab.documentElement.outerHTML });
     // const iframe = document.getElementById('iframe');
     // iframe.srcdoc = wab.outerHTML;
   });
