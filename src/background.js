@@ -1,25 +1,36 @@
 let waTabId = null;
 let previousTabId;
 
+function findWhatsAppTab(foundCallback, notFoundCallback) {
+  chrome.tabs.query(
+    { url: 'https://web.whatsapp.com/*' },
+    (result) => {
+      if (result.length > 0) {
+        foundCallback(result[0]);
+      } else {
+        notFoundCallback();
+      }
+    },
+  );
+}
+
 function ensureWhatsAppRunning() {
-  chrome.tabs.query({
-    url: 'https://web.whatsapp.com/*',
-  }, (result) => {
-    if (result.length > 0) {
-      chrome.tabs.update(result[0].id, {
+  findWhatsAppTab((tab) => {
+    waTabId = tab.id;
+    if (!tab.pinned) {
+      chrome.tabs.update(tab.id, {
         pinned: true,
-      });
-      waTabId = result[0].id;
-    } else {
-      chrome.tabs.create({
-        index: 0,
-        pinned: true,
-        url: 'https://web.whatsapp.com/*',
-        active: false,
-      }, (tab) => {
-        waTabId = tab.id;
       });
     }
+  }, () => {
+    chrome.tabs.create({
+      index: 0,
+      pinned: true,
+      url: 'https://web.whatsapp.com/',
+      active: false,
+    }, (tab) => {
+      waTabId = tab.id;
+    });
   });
 }
 
@@ -46,5 +57,11 @@ chrome.browserAction.onClicked.addListener(onTabSwitchRequested);
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'wa-toggle') {
     onTabSwitchRequested();
+  }
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  if (tabId === waTabId) {
+    window.setTimeout(ensureWhatsAppRunning, 2000);
   }
 });
