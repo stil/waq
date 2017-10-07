@@ -1,5 +1,5 @@
 const favicon = document.getElementById('favicon');
-const faviconUrl = chrome.runtime.getURL('src/icons/icon.svg');
+const faviconUrl = chrome.runtime.getURL('src/icons/icon.ico');
 
 const observer = new MutationObserver(((mutations) => {
   mutations.forEach((mutation) => {
