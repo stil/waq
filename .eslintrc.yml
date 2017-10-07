@@ -1,10 +1,7 @@
 extends: airbnb-base
-globals:
-  XMLHttpRequest: true
-  window: true
-  document: true
+env:
   browser: true
-  chrome: true
+  webextensions: true
 rules:
   no-console: "off"
   no-plusplus: "off"

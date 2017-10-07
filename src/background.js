@@ -1,92 +1,50 @@
-chrome.browserAction.onClicked.addListener((e) => {
-  console.log(e);
+let waTabId = null;
+let previousTabId;
+
+function ensureWhatsAppRunning() {
+  chrome.tabs.query({
+    url: 'https://web.whatsapp.com/*',
+  }, (result) => {
+    if (result.length > 0) {
+      chrome.tabs.update(result[0].id, {
+        pinned: true,
+      });
+      waTabId = result[0].id;
+    } else {
+      chrome.tabs.create({
+        index: 0,
+        pinned: true,
+        url: 'https://web.whatsapp.com/*',
+        active: false,
+      }, (tab) => {
+        waTabId = tab.id;
+      });
+    }
+  });
+}
+
+function onTabSwitchRequested() {
+  chrome.tabs.query({ active: true }, (tabs) => {
+    let tabToActivateId;
+    if (tabs[0].id !== waTabId) {
+      previousTabId = tabs[0].id;
+      tabToActivateId = waTabId;
+    } else {
+      tabToActivateId = previousTabId;
+    }
+
+    chrome.tabs.update(tabToActivateId, {
+      active: true,
+    });
+  });
+}
+
+ensureWhatsAppRunning();
+
+chrome.browserAction.onClicked.addListener(onTabSwitchRequested);
+
+chrome.commands.onCommand.addListener((command) => {
+  if (command === 'wa-toggle') {
+    onTabSwitchRequested();
+  }
 });
-
-function handleCreated(tab) {
-  console.log(tab);
-}
-
-chrome.tabs.onCreated.addListener(handleCreated);
-
-chrome.webRequest.onHeadersReceived.addListener(
-  (info) => {
-    const headers = info.responseHeaders.filter(header => header.name !== 'x-frame-options' && header.name !== 'content-security-policy');
-    return { responseHeaders: headers };
-  },
-  {
-    urls: ['https://*.whatsapp.com/*'], // Pattern to match all http(s) pages
-  },
-  ['blocking', 'responseHeaders'],
-);
-
-// Fix "Origin" header.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  (info) => {
-    const headers = info.requestHeaders;
-    for (let i = headers.length - 1; i >= 0; --i) {
-      const header = headers[i].name.toLowerCase();
-      if (header === 'origin') {
-        headers[i].value = 'https://web.whatsapp.com';
-      }
-    }
-    return { requestHeaders: headers };
-  },
-  {
-    urls: ['wss://*.web.whatsapp.com/*'],
-    types: ['websocket'],
-  },
-  ['blocking', 'requestHeaders'],
-);
-
-// Watch for headers.
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  (info) => {
-    const headers = info.requestHeaders;
-    for (let i = headers.length - 1; i >= 0; --i) {
-      const header = headers[i].name.toLowerCase();
-      if (header === 'origin') {
-        headers[i].value = 'https://web.whatsapp.com';
-      }
-    }
-    return { requestHeaders: headers };
-  },
-  {
-    urls: ['https://web.whatsapp.com/*'],
-  },
-  ['blocking', 'requestHeaders'],
-);
-
-
-function reloadWhatsAppCache() {
-  const oReq = new XMLHttpRequest();
-  oReq.addEventListener('load', function () {
-    const wab = new DOMParser().parseFromString(this.responseText, 'text/html');
-
-    const baseEl = document.createElement('base');
-    baseEl.href = 'https://web.whatsapp.com';
-    const headEl = wab.getElementsByTagName('head')[0];
-    headEl.insertBefore(baseEl, headEl.firstChild);
-
-    chrome.storage.local.set({ waCache: wab.documentElement.outerHTML });
-    // const iframe = document.getElementById('iframe');
-    // iframe.srcdoc = wab.outerHTML;
-  });
-
-  oReq.addEventListener('error', function () {
-    console.log(this.responseText);
-  });
-
-  oReq.addEventListener('abort', function () {
-    console.log(this.responseText);
-  });
-
-  oReq.withCredentials = true;
-  oReq.open('GET', 'https://web.whatsapp.com/', true);
-  oReq.send();
-}
-
-window.setInterval(() => {
-  reloadWhatsAppCache();
-}, 360 * 1000);
-
-reloadWhatsAppCache();
