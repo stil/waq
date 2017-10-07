@@ -1,6 +1,14 @@
-document.getElementById('favicon').setAttribute('href', chrome.runtime.getURL('src/icons/icon.svg'));
+const favicon = document.getElementById('favicon');
+const faviconUrl = chrome.runtime.getURL('src/icons/icon.svg');
 
+const observer = new MutationObserver(((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.attributeName === 'href' && favicon.getAttribute('href') !== faviconUrl) {
+      favicon.setAttribute('href', faviconUrl);
+    }
+  });
+}));
 
-window.setTimeout(() => {
-  document.getElementById('favicon').setAttribute('href', chrome.runtime.getURL('src/icons/icon.svg'));
-}, 5000);
+observer.observe(favicon, { attributes: true });
+
+favicon.setAttribute('href', faviconUrl);
