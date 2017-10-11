@@ -13,7 +13,6 @@
   },
   "permissions": [
     "https://*.whatsapp.com/*",
-    "wss://*.web.whatsapp.com/*",
     "tabs"
   ],
   "commands": {
