@@ -65,3 +65,13 @@ chrome.tabs.onRemoved.addListener((tabId) => {
     window.setTimeout(ensureWhatsAppRunning, 2000);
   }
 });
+
+/**
+ * Handle WhatsApp tab title change (possibly a notification).
+ */
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === 'title_change') {
+    const match = message.current_title.match(/\((\d+)\)/);
+    chrome.browserAction.setBadgeText({ text: match === null ? '' : match[1] });
+  }
+});
