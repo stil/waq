@@ -29,7 +29,10 @@ function ensureWhatsAppRunning() {
       url: 'https://web.whatsapp.com/',
       active: false,
     }, (tab) => {
-      waTabId = tab.id;
+      // tab is undefined in situation when all windows all closed.
+      if (typeof tab === 'object') {
+        waTabId = tab.id;
+      }
     });
   });
 }
