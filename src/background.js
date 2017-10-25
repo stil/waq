@@ -53,7 +53,9 @@ function onTabSwitchRequested() {
   });
 }
 
-ensureWhatsAppRunning();
+// Race condition, tab restoring takes place at same time background script is executed.
+// https://bugzilla.mozilla.org/show_bug.cgi?id=1411603
+window.setTimeout(ensureWhatsAppRunning, 2000);
 
 chrome.browserAction.onClicked.addListener(onTabSwitchRequested);
 
