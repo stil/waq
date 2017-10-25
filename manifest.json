@@ -3,6 +3,11 @@
   "description": "Runs WhatsApp in background and makes it accessible via hotkey.",
   "version": "0.1.3",
   "manifest_version": 2,
+  "applications": {
+    "gecko": {
+      "id": "{66d3202b-fb4b-4585-8f1e-aecf1f40f0b1}"
+    }
+  },
   "icons": {
     "16": "src/icons/icon16.png",
     "32": "src/icons/icon32.png",
