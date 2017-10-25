@@ -1,5 +1,4 @@
 .idea/
 node_modules/
 *.zip
-src/icons/icon.ai
-*.psd
+/assets
